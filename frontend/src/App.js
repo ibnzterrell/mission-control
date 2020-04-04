@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Button, Collapsible, Heading, Grommet, Layer, ResponsiveContext } from 'grommet';
-import { FormClose, Notification } from 'grommet-icons';
+import { Grid, Box, Button, Collapsible, Heading, Grommet, Layer, ResponsiveContext, DropButton, Select } from 'grommet';
+import { Google, Windows, Amazon, Satellite, FormClose, Notification } from 'grommet-icons';
 
 const theme = {
+  /*
   global: {
     colors: {
       brand: '#228BE6',
@@ -13,6 +14,7 @@ const theme = {
       height: '20px',
     },
   },
+  */
 };
 
 const AppBar = (props) => (
@@ -28,8 +30,48 @@ const AppBar = (props) => (
     {...props}
   />
 );
+const Card = (props) => (
+  <Box
+    flex
+    elevation='large'
+    gap="small"
+    pad="small"
+    {...props}
+  >
+  </Box>
+)
+const SelectProviderCard = (props) => (
+  <Card
+    {...props} >
+    <Select
+      options={['Select a Cloud Provider', 'Google Cloud Platform', 'Microsoft Azure', 'Amazon Web Services']}
+      value={props.provider}
+      onChange={({ option }) => props.setProvider(option)}
+    />
+  </Card >
+)
+const DatabaseCard = (props) => (
+  <Box>
+
+  </Box>
+);
 
 function App() {
+  // Default Configuration
+  const defaultProvider = 'Select a Cloud Provider';
+  const defaultFunctions = [];
+  const defaultDatabases = [];
+
+  // Configuration State
+  const initProvider = JSON.parse(window.localStorage.getItem('provider')) || defaultProvider;
+  const initFunction = JSON.parse(window.localStorage.getItem('functions')) || defaultFunctions;
+  const initDatabases = JSON.parse(window.localStorage.getItem('databases')) || defaultDatabases;
+
+  const [provider, setProvider] = useState(initProvider);
+  const [functions, setFunctions] = useState(initFunction);
+  const [databases, setDatabases] = useState(initDatabases);
+
+  // App State
   const [showSidebar, setShowSidebar] = useState(false);
 
   return (
@@ -38,13 +80,18 @@ function App() {
         {size => (
           <Box fill>
             <AppBar>
-              <Heading level='3' margin='none'>Mission Control</Heading>
+              <Heading level='3' margin='none'><Satellite /> Mission Control</Heading>
               <Button icon={<Notification />} onClick={() => { setShowSidebar(!showSidebar) }} />
             </AppBar>
+
             <Box direction='row' flex overflow={{ horizontal: 'hidden' }}>
               <Box flex align='center' justify='center'>
-                App Body
-          </Box>
+                <SelectProviderCard
+                  provider={provider}
+                  setProvider={setProvider}
+                />
+              </Box>
+
               {(!showSidebar || size !== 'small') ? (
                 <Collapsible direction="horizontal" open={showSidebar}>
                   <Box
