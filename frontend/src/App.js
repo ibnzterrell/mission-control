@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, Box, Button, Collapsible, Heading, Grommet, Layer, ResponsiveContext, DropButton, Select } from 'grommet';
+import { Select, TextInput, Main, Box, Button, Collapsible, Heading, Grommet, Layer, ResponsiveContext, Form, FormField, RadioButtonGroup } from 'grommet';
 import { Google, Windows, Amazon, Satellite, FormClose, Notification } from 'grommet-icons';
 
 const theme = {
@@ -25,29 +25,57 @@ const AppBar = (props) => (
     justify='between'
     background='brand'
     pad={{ left: 'medium', right: 'small', vertical: 'small' }}
-    elevation='medium'
+    elevation='low'
     style={{ zIndex: '1' }}
     {...props}
   />
 );
 const Card = (props) => (
   <Box
-    flex
-    elevation='large'
-    gap="small"
-    pad="small"
+    width='large'
+    flex='shrink'
+    elevation='medium'
+    gap='small'
+    pad='small'
     {...props}
   >
-  </Box>
+    <Heading
+      level='3'
+      margin='small'
+    >
+      {props.title}
+    </Heading>
+    {props.children}
+  </Box >
 )
-const SelectProviderCard = (props) => (
+const ProviderCard = (props) => (
   <Card
+    title='Cloud Provider'
     {...props} >
-    <Select
-      options={['Select a Cloud Provider', 'Google Cloud Platform', 'Microsoft Azure', 'Amazon Web Services']}
-      value={props.provider}
-      onChange={({ option }) => props.setProvider(option)}
-    />
+    <Form>
+      <FormField label='Select a Provider'>
+        <RadioButtonGroup
+          name='ProviderGroup'
+          options={['Google Cloud Platform', 'Microsoft Azure', 'Amazon Web Services']}
+          value={props.provider}
+          onChange={(event) => props.setProvider(event.target.value)}
+        />
+      </FormField>
+      <FormField label='Project ID'>
+        <TextInput placeholder="type here"
+          value={props.projectID}
+          onChange={(event) => props.setProjectID(event.target.value)}
+        />
+      </FormField>
+      <FormField label='Region'>
+        <Select
+          name='RegionGroup'
+          options={['us-east1', 'us-east2', 'us-central1', 'us-west1', 'us-west2', 'us-west3']}
+          value={props.region}
+          onChange={({ option }) => props.setRegion(option)}
+        />
+      </FormField>
+    </Form>
   </Card >
 )
 const DatabaseCard = (props) => (
@@ -58,16 +86,22 @@ const DatabaseCard = (props) => (
 
 function App() {
   // Default Configuration
-  const defaultProvider = 'Select a Cloud Provider';
+  const defaultProvider = 'none';
+  const defaultRegion = 'none';
+  const defaultProjectID = 'none';
   const defaultFunctions = [];
   const defaultDatabases = [];
 
   // Configuration State
   const initProvider = JSON.parse(window.localStorage.getItem('provider')) || defaultProvider;
+  const initRegion = JSON.parse(window.localStorage.getItem('region')) || defaultRegion;
+  const initProjectID = JSON.parse(window.localStorage.getItem('projectID')) || defaultProjectID;
   const initFunction = JSON.parse(window.localStorage.getItem('functions')) || defaultFunctions;
   const initDatabases = JSON.parse(window.localStorage.getItem('databases')) || defaultDatabases;
 
   const [provider, setProvider] = useState(initProvider);
+  const [region, setRegion] = useState(initRegion);
+  const [projectID, setProjectID] = useState(initProjectID);
   const [functions, setFunctions] = useState(initFunction);
   const [databases, setDatabases] = useState(initDatabases);
 
@@ -78,17 +112,22 @@ function App() {
     <Grommet theme={theme} full themeMode="light">
       <ResponsiveContext.Consumer>
         {size => (
-          <Box fill>
+          <Main>
             <AppBar>
-              <Heading level='3' margin='none'><Satellite /> Mission Control</Heading>
+              <Heading level='2' margin='none'><Satellite /> Mission Control</Heading>
               <Button icon={<Notification />} onClick={() => { setShowSidebar(!showSidebar) }} />
             </AppBar>
 
             <Box direction='row' flex overflow={{ horizontal: 'hidden' }}>
               <Box flex align='center' justify='center'>
-                <SelectProviderCard
+                <ProviderCard
                   provider={provider}
                   setProvider={setProvider}
+                  projectID={projectID}
+                  setProjectID={setProjectID}
+                  region={region}
+                  setRegion={setRegion}
+
                 />
               </Box>
 
@@ -129,7 +168,7 @@ function App() {
                   </Layer>
                 )}
             </Box>
-          </Box>
+          </Main>
         )}
       </ResponsiveContext.Consumer>
 
