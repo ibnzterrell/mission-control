@@ -1,2 +1,2 @@
 # mission_control
-Easily generate and deploy cloud backends using terraform for rapid protoyping
+CatHacks 2020 - Easily generate and deploy cloud backends using terraform for rapid protoyping
