@@ -1,0 +1,1 @@
+{"provider":"Google Cloud Platform","region":"us-central1","projectID":"mars-project-273221","functions":[],"databaseTables":[{"name":"climate_readings"}],"storageBuckets":[{"name":"soil-images"}]}

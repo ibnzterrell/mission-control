@@ -1,21 +1,6 @@
 import React, { useState } from 'react';
 import { Text, Accordion, AccordionPanel, Select, TextInput, Main, Box, Button, Collapsible, Heading, Grommet, Layer, ResponsiveContext, Form, FormField, RadioButtonGroup } from 'grommet';
-import { Trash, DocumentUpload, DocumentDownload, CloudDownload, CloudUpload, Troubleshoot, Satellite, Close, Notification } from 'grommet-icons';
-
-const theme = {
-  /*
-  global: {
-    colors: {
-      brand: '#228BE6',
-    },
-    font: {
-      family: 'Roboto',
-      size: '18px',
-      height: '20px',
-    },
-  },
-  */
-};
+import { Trash, DocumentUpload, DocumentDownload, CloudDownload, CloudUpload, Troubleshoot, Satellite, Close } from 'grommet-icons';
 
 const AppBar = (props) => (
   <Box
@@ -48,7 +33,35 @@ const Card = (props) => (
     {props.children}
   </Box >
 )
-const ProviderCard = (props) => (
+
+const FunctionCard = (props) => (
+  <Card
+    title='Function'
+    {...props}
+  >
+    <Text>{props.name}</Text>
+    <Text>{props.language}</Text>
+  </Card>
+)
+const DatabaseTableCard = (props) => (
+  <Card
+    title='Database Table'
+    {...props}
+  >
+    <Text>{props.name}</Text>
+  </Card>
+);
+
+const StorageBucketCard = (props) => (
+  <Card
+    title='Storage Bucket'
+    {...props}
+  >
+    <Text>{props.name}</Text>
+  </Card>
+);
+
+const SelectProviderCard = (props) => (
   <Card
     title='Cloud Provider'
     {...props} >
@@ -80,32 +93,7 @@ const ProviderCard = (props) => (
   </Card >
 )
 
-const FunctionCard = (props) => (
-  <Card
-    title='Function'
-    {...props}
-  >
-    <Text>{props.name}</Text>
-    <Text>{props.language}</Text>
-  </Card>
-)
-const DatabaseTableCard = (props) => (
-  <Card
-    title='Database Table'
-    {...props}
-  >
-    <Text>{props.name}</Text>
-  </Card>
-);
 
-const StorageBucketCard = (props) => (
-  <Card
-    title='Storage Bucket'
-    {...props}
-  >
-    <Text>{props.name}</Text>
-  </Card>
-);
 const AccordionFormButton = (props) => (
   <Button
     margin='small'
@@ -313,7 +301,7 @@ function App() {
     const blob = new Blob([configSave], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.download = 'project.json';
+    link.download = `${projectID}.json`;
     link.href = url;
     link.click();
   }
@@ -324,7 +312,7 @@ function App() {
 
   }
   return (
-    <Grommet theme={theme} full themeMode="light">
+    <Grommet full themeMode="light">
       <ResponsiveContext.Consumer>
         {size => (
           <Main>
@@ -344,7 +332,7 @@ function App() {
             <Box direction='row' fill={true}>
               <Box flex align='center' overflow='scroll'>
                 <Box flex={false}>
-                  <ProviderCard
+                  <SelectProviderCard
                     provider={provider}
                     setProvider={setProvider}
                     projectID={projectID}
