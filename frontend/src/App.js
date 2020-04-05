@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Text, Accordion, AccordionPanel, Select, TextInput, Main, Box, Button, Collapsible, Heading, Grommet, Layer, ResponsiveContext, Form, FormField, RadioButtonGroup } from 'grommet';
-import { DocumentUpload, DocumentDownload, CloudDownload, CloudUpload, Troubleshoot, Satellite, Close, Notification } from 'grommet-icons';
+import { Trash, DocumentUpload, DocumentDownload, CloudDownload, CloudUpload, Troubleshoot, Satellite, Close, Notification } from 'grommet-icons';
 
 const theme = {
   /*
@@ -263,7 +263,14 @@ function App() {
     setShowSidebar(false);
     setStorageBucketName(initStorageBucketName);
   }
-
+  function clearState() {
+    setProvider(defaultProvider);
+    setRegion(defaultRegion);
+    setProjectID(defaultProjectID);
+    setFunctions(defaultFunctions);
+    setDatabaseTables(defaultDatabaseTables);
+    setStorageBuckets(defaultStorageBuckets);
+  }
   function importStateJSON(str) {
     console.log(str);
     const newState = JSON.parse(str);
@@ -324,6 +331,7 @@ function App() {
             <AppBar>
               <Heading level='2' margin='none'><Satellite /> Mission Control</Heading>
               <Box direction='row'>
+                <Button icon={<Trash />} onClick={() => { clearState() }} />
                 <Button icon={<DocumentUpload />} onClick={() => { importStateLocal() }} />
                 <Button icon={<DocumentDownload />} onClick={() => { exportStateLocal() }} />
                 <Button icon={<CloudUpload />} onClick={() => { exportCloudState() }} />
