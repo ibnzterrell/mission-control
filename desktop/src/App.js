@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Text, Select, TextInput, Main, Box, Button, Collapsible, Heading, Grommet, Layer, ResponsiveContext, Form, FormField, RadioButtonGroup } from 'grommet';
-import { Scorecard, Deploy, Trash, DocumentUpload, CloudDownload, Launch } from 'grommet-icons';
+import { Text, Select, TextInput, Main, Box, Button, Heading, Grommet, ResponsiveContext, Form, FormField, RadioButtonGroup } from 'grommet';
+import { Validate, Tools, Inspect, Threats, Clipboard, Scorecard, Deploy, Trash, DocumentUpload, CloudDownload, Launch } from 'grommet-icons';
+import { generateTerraform } from './generate.js';
 
 const AppBar = (props) => (
   <Box
@@ -158,11 +159,32 @@ function App() {
   function importCloudState() {
 
   }
+  function generateFromState() {
+    let state = {
+      provider,
+      region,
+      projectID,
+      functions,
+      databaseTables,
+      storageBuckets
+    };
+    const tfConfig = generateTerraform(state);
+    const blob = new Blob([tfConfig], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = `main.tf`;
+    link.href = url;
+    link.click();
+  }
   function verifyState() {
-
+    fetch('http://localhost:2004/plan');
   }
   function deployState() {
+    fetch('http://localhost:2004/apply');
+  }
 
+  function destroyState() {
+    fetch('http://localhost:2004/destroy');
   }
   return (
     <Grommet full themeMode="light">
@@ -175,8 +197,10 @@ function App() {
                 <Button icon={<Trash />} onClick={() => { clearState() }} />
                 <Button icon={<DocumentUpload />} onClick={() => { importStateLocal() }} />
                 <Button icon={<CloudDownload />} onClick={() => { importCloudState() }} />
-                <Button icon={<Scorecard />} onClick={() => { verifyState() }} />
+                <Button icon={<Scorecard />} onClick={() => { generateFromState() }} />
+                <Button icon={<Validate />} onClick={() => { verifyState() }} />
                 <Button icon={<Deploy />} onClick={() => { deployState() }} />
+                <Button icon={<Threats />} onClick={() => { destroyState() }} />
               </Box>
             </AppBar>
 
@@ -192,8 +216,8 @@ function App() {
                     setRegion={setRegion}
                   />
                   {functions.map(
-                    functionS => (
-                      <FunctionCard key={functionS.name} name={functionS.name} language={functionS.language} />
+                    func => (
+                      <FunctionCard key={func.name} name={func.name} language={func.language} />
                     )
                   )}
                   {databaseTables.map(

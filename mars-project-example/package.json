@@ -1,0 +1,15 @@
+{
+  "name": "mars-project-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "satellite.js",
+  "scripts": {
+    "start": "node satellite.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
