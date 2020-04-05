@@ -20,8 +20,8 @@ function generateDefaultStorageBlock(provider) {
     if (provider === providerGCP) {
         block +=
             `
-resource "google_storage_bucket" "mc_DefaultBucket"{
-    name="mc_DefaultBucket"
+resource "google_storage_bucket" "missioncontrolbucket_default"{
+    name="missioncontrolbucket_default"
 }
     `;
     }
@@ -47,7 +47,46 @@ function generateFunctionBlocks(provider, functions) {
         if (provider === providerGCP) {
             block += generateDefaultStorageBlock(provider);
             functions.forEach(func => {
-                block += '';
+                block +=
+                    `
+data "archive_file" "${func.name}-zip" {
+    type        = "zip"
+    source_dir  = "\${path.module}/${func.name}"
+    output_path = "\${path.module}/zips/${func.name}.zip"
+  }
+  
+  resource "google_storage_bucket_object" "${func.name}-zip" {
+    name   = "api-\${data.archive_file.${func.name}-zip.output_md5}.zip"
+    bucket = google_storage_bucket.missioncontrolbucket_default.name
+    source = "\${path.module}/zips/${func.name}.zip"
+  }
+  
+  resource "google_cloudfunctions_function" "${func.name}" {
+    name                  = "${func.name}"
+    description           = "${func.name}-function"
+    runtime               = "nodejs8"
+    available_memory_mb   = 128
+    source_archive_bucket = google_storage_bucket.missioncontrolbucket_default.name
+    source_archive_object = google_storage_bucket_object.${func.name}-zip.name
+    trigger_http          = true
+    entry_point           = "handler"
+  }
+  
+  resource "google_cloudfunctions_function_iam_binding" "${func.name}-invoke" {
+    project        = google_cloudfunctions_function.${func.name}.project
+    region         = google_cloudfunctions_function.${func.name}.region
+    cloud_function = google_cloudfunctions_function.${func.name}.name
+  
+    role    = "roles/cloudfunctions.invoker"
+    members = ["allUsers"]
+  }
+  
+  output "Function_URL_API" {
+    value = google_cloudfunctions_function.${func.name}.https_trigger_url
+  }
+                 
+
+`;
             });
         }
     }

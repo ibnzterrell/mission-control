@@ -182,7 +182,6 @@ function App() {
   function deployState() {
     fetch('http://localhost:2004/apply');
   }
-
   function destroyState() {
     fetch('http://localhost:2004/destroy');
   }
