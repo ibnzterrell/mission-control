@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Accordion, AccordionPanel, Select, TextInput, Main, Box, Button, Collapsible, Heading, Grommet, Layer, ResponsiveContext, Form, FormField, RadioButtonGroup } from 'grommet';
+import { Text, Accordion, AccordionPanel, Select, TextInput, Main, Box, Button, Collapsible, Heading, Grommet, Layer, ResponsiveContext, Form, FormField, RadioButtonGroup } from 'grommet';
 import { Database, Troubleshoot, Google, Windows, Amazon, Satellite, Close, Notification } from 'grommet-icons';
 
 const theme = {
@@ -32,7 +32,7 @@ const AppBar = (props) => (
 );
 const Card = (props) => (
   <Box
-    border='true'
+    border={true}
     width='large'
     elevation='medium'
     pad='medium'
@@ -79,21 +79,40 @@ const ProviderCard = (props) => (
     </Form>
   </Card >
 )
-const DatabaseCard = (props) => (
+
+const FunctionCard = (props) => (
+  <Card
+    title='Function'
+    {...props}
+  >
+    <Text>{props.name}</Text>
+    <Text>{props.language}</Text>
+  </Card>
+)
+const DatabaseTableCard = (props) => (
   <Card
     title='Database'
     {...props}
   >
-
+    <Text>{props.name}</Text>
   </Card>
 );
 
+const StorageBucketCard = (props) => (
+  <Card
+    title='Storage Bucket'
+    {...props}
+  >
+    <Text>{props.name}</Text>
+  </Card>
+);
 const AccordionFormButton = (props) => (
   <Button
     margin='small'
     primary
     label={props.label}
     type='submit'
+    {...props}
   />
 );
 const AccordionCard = (props) => (
@@ -130,7 +149,7 @@ const AddFunctionCard = (props) => (
           onChange={(event) => props.setFunctionLanguage(event.target.value)}
         />
       </FormField>
-      <AccordionFormButton label="Add Function" />
+      <AccordionFormButton label="Add Function" onClick={() => props.addFunction(props.functionName, props.functionLanguage)} />
     </Form>
   </AccordionCard>
 );
@@ -149,7 +168,7 @@ const AddDatabaseTableCard = (props) => (
           onChange={(event) => props.setDatabaseTableName(event.target.value)}
         />
       </FormField>
-      <AccordionFormButton label="Add Database Table" />
+      <AccordionFormButton label="Add Database Table" onClick={() => props.addDatabaseTable(props.databaseTableName)} />
     </Form>
   </AccordionCard>
 );
@@ -168,30 +187,34 @@ const AddStorageBucketCard = (props) => (
           onChange={(event) => props.setStorageBucketName(event.target.value)}
         />
       </FormField>
-      <AccordionFormButton label="Add Storage Bucket" />
+      <AccordionFormButton label="Add Storage Bucket" onClick={() => props.addStorageBucket(props.storageBucketName)} />
     </Form>
   </AccordionCard>
 );
+
 function App() {
   // Default Configuration
   const defaultProvider = 'none';
   const defaultRegion = 'none';
   const defaultProjectID = 'none';
   const defaultFunctions = [];
-  const defaultDatabases = [];
+  const defaultDatabaseTables = [];
+  const defaultStorageBuckets = [];
 
   // Configuration State
   const initProvider = JSON.parse(window.localStorage.getItem('provider')) || defaultProvider;
   const initRegion = JSON.parse(window.localStorage.getItem('region')) || defaultRegion;
   const initProjectID = JSON.parse(window.localStorage.getItem('projectID')) || defaultProjectID;
   const initFunction = JSON.parse(window.localStorage.getItem('functions')) || defaultFunctions;
-  const initDatabases = JSON.parse(window.localStorage.getItem('databases')) || defaultDatabases;
+  const initDatabaseTables = JSON.parse(window.localStorage.getItem('databaseTables')) || defaultDatabaseTables;
+  const initStorageBuckets = JSON.parse(window.localStorage.getItem('storageBuckets')) || defaultStorageBuckets;
 
   const [provider, setProvider] = useState(initProvider);
   const [region, setRegion] = useState(initRegion);
   const [projectID, setProjectID] = useState(initProjectID);
   const [functions, setFunctions] = useState(initFunction);
-  const [databases, setDatabases] = useState(initDatabases);
+  const [databaseTables, setDatabaseTables] = useState(initDatabaseTables);
+  const [storageBuckets, setStorageBuckets] = useState(initStorageBuckets);
 
   // Default App State
   const initFunctionName = 'none';
@@ -205,6 +228,34 @@ function App() {
   const [functionLanguage, setFunctionLanguage] = useState(initFunctionLanguage);
   const [databaseTableName, setDatabaseTableName] = useState(initDatabaseTableName);
   const [storageBucketName, setStorageBucketName] = useState(initStorageBucketName);
+
+  function addFunction(name, language) {
+    let functionList = functions.concat(
+      {
+        name,
+        language
+      }
+    );
+    setFunctions(functionList)
+  }
+
+  function addDatabaseTable(name) {
+    let tableList = databaseTables.concat(
+      {
+        name
+      }
+    );
+    setDatabaseTables(tableList);
+  }
+
+  function addStorageBucket(name) {
+    let bucketList = storageBuckets.concat(
+      {
+        name
+      }
+    );
+    setStorageBuckets(bucketList);
+  }
 
   return (
     <Grommet theme={theme} full themeMode="light">
@@ -226,8 +277,22 @@ function App() {
                     setProjectID={setProjectID}
                     region={region}
                     setRegion={setRegion}
-
                   />
+                  {functions.map(
+                    functionS => (
+                      <FunctionCard key={functionS.name} name={functionS.name} language={functionS.language} />
+                    )
+                  )}
+                  {databaseTables.map(
+                    table => (
+                      <DatabaseTableCard key={table.name} name={table.name} />
+                    )
+                  )}
+                  {storageBuckets.map(
+                    bucket => (
+                      <StorageBucketCard key={bucket.name} name={bucket.name} />
+                    )
+                  )}
                 </Box>
               </Box>
 
@@ -254,14 +319,17 @@ function App() {
                         setFunctionName={setFunctionName}
                         functionLanguage={functionLanguage}
                         setFunctionLanguage={setFunctionLanguage}
+                        addFunction={addFunction}
                       />
                       <AddDatabaseTableCard
                         databaseTableName={databaseTableName}
                         setDatabaseTableName={setDatabaseTableName}
+                        addDatabaseTable={addDatabaseTable}
                       />
                       <AddStorageBucketCard
                         storageBucketName={storageBucketName}
                         setStorageBucketName={setStorageBucketName}
+                        addStorageBucket={addStorageBucket}
                       />
                     </Accordion>
                   </Box>
