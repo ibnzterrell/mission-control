@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Text, Accordion, AccordionPanel, Select, TextInput, Main, Box, Button, Collapsible, Heading, Grommet, Layer, ResponsiveContext, Form, FormField, RadioButtonGroup } from 'grommet';
-import { Launch, Deploy, Troubleshoot, Satellite, Close, Notification } from 'grommet-icons';
+import { DocumentUpload, DocumentDownload, CloudDownload, CloudUpload, Troubleshoot, Satellite, Close, Notification } from 'grommet-icons';
 
 const theme = {
   /*
@@ -205,14 +205,14 @@ function App() {
   const initProvider = JSON.parse(window.localStorage.getItem('provider')) || defaultProvider;
   const initRegion = JSON.parse(window.localStorage.getItem('region')) || defaultRegion;
   const initProjectID = JSON.parse(window.localStorage.getItem('projectID')) || defaultProjectID;
-  const initFunction = JSON.parse(window.localStorage.getItem('functions')) || defaultFunctions;
+  const initFunctions = JSON.parse(window.localStorage.getItem('functions')) || defaultFunctions;
   const initDatabaseTables = JSON.parse(window.localStorage.getItem('databaseTables')) || defaultDatabaseTables;
   const initStorageBuckets = JSON.parse(window.localStorage.getItem('storageBuckets')) || defaultStorageBuckets;
 
   const [provider, setProvider] = useState(initProvider);
   const [region, setRegion] = useState(initRegion);
   const [projectID, setProjectID] = useState(initProjectID);
-  const [functions, setFunctions] = useState(initFunction);
+  const [functions, setFunctions] = useState(initFunctions);
   const [databaseTables, setDatabaseTables] = useState(initDatabaseTables);
   const [storageBuckets, setStorageBuckets] = useState(initStorageBuckets);
 
@@ -264,10 +264,37 @@ function App() {
     setStorageBucketName(initStorageBucketName);
   }
 
-  function importState() {
-
+  function importStateJSON(str) {
+    console.log(str);
+    const newState = JSON.parse(str);
+    setProvider(newState.provider);
+    setRegion(newState.region);
+    setProjectID(newState.projectID);
+    setFunctions(newState.functions);
+    setDatabaseTables(newState.databaseTables);
+    setStorageBuckets(newState.storageBuckets);
   }
-  function exportState() {
+
+  const fileElement = document.getElementById('fileElement');
+  const fileReader = new FileReader();
+
+  function fileLoaded() {
+    console.log('File Uploaded!');
+    importStateJSON(fileReader.result);
+  }
+  function fileHandler() {
+    if (this.files.length) {
+      fileReader.onloadend = fileLoaded;
+      fileReader.readAsText(this.files[0]);
+    }
+  }
+
+  fileElement.addEventListener('change', fileHandler, false);
+
+  function importStateLocal() {
+    fileElement.click();
+  }
+  function exportStateLocal() {
     const configSave = JSON.stringify({
       provider,
       region,
@@ -283,7 +310,12 @@ function App() {
     link.href = url;
     link.click();
   }
+  function importCloudState() {
 
+  }
+  function exportCloudState() {
+
+  }
   return (
     <Grommet theme={theme} full themeMode="light">
       <ResponsiveContext.Consumer>
@@ -292,7 +324,10 @@ function App() {
             <AppBar>
               <Heading level='2' margin='none'><Satellite /> Mission Control</Heading>
               <Box direction='row'>
-                <Button icon={<Launch />} onClick={() => { exportState() }} />
+                <Button icon={<DocumentUpload />} onClick={() => { importStateLocal() }} />
+                <Button icon={<DocumentDownload />} onClick={() => { exportStateLocal() }} />
+                <Button icon={<CloudUpload />} onClick={() => { exportCloudState() }} />
+                <Button icon={<CloudDownload />} onClick={() => { importCloudState() }} />
                 <Button icon={<Troubleshoot />} onClick={() => { setShowSidebar(!showSidebar) }} />
               </Box>
 
