@@ -236,7 +236,8 @@ function App() {
         language
       }
     );
-    setFunctions(functionList)
+    setFunctions(functionList);
+    setShowSidebar(false);
   }
 
   function addDatabaseTable(name) {
@@ -246,6 +247,7 @@ function App() {
       }
     );
     setDatabaseTables(tableList);
+    setShowSidebar(false);
   }
 
   function addStorageBucket(name) {
@@ -255,6 +257,7 @@ function App() {
       }
     );
     setStorageBuckets(bucketList);
+    setShowSidebar(false);
   }
 
   return (
