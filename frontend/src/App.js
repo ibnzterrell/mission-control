@@ -87,9 +87,19 @@ const DatabaseCard = (props) => (
 
   </Card>
 );
+
+const AccordionFormButton = (props) => (
+  <Button
+    margin='small'
+    primary
+    label={props.label}
+    type='submit'
+  />
+);
 const AccordionCard = (props) => (
   <AccordionPanel
     label={props.title}
+    margin='small'
     {...props}
   >
     {props.children}
@@ -100,7 +110,6 @@ const AddFunctionCard = (props) => (
   <AccordionCard
     title='Add a Serverless Function'
     {...props}
-
   >
     <Form>
       <FormField
@@ -121,7 +130,7 @@ const AddFunctionCard = (props) => (
           onChange={(event) => props.setFunctionLanguage(event.target.value)}
         />
       </FormField>
-      <Button type="submit" primary label="Add Function" />
+      <AccordionFormButton label="Add Function" />
     </Form>
   </AccordionCard>
 );
@@ -140,7 +149,7 @@ const AddDatabaseTableCard = (props) => (
           onChange={(event) => props.setDatabaseTableName(event.target.value)}
         />
       </FormField>
-      <Button type="submit" primary label="Add Database Table" />
+      <AccordionFormButton label="Add Database Table" />
     </Form>
   </AccordionCard>
 );
@@ -159,7 +168,7 @@ const AddStorageBucketCard = (props) => (
           onChange={(event) => props.setStorageBucketName(event.target.value)}
         />
       </FormField>
-      <Button type="submit" primary label="Add Storage Bucket" />
+      <AccordionFormButton label="Add Storage Bucket" />
     </Form>
   </AccordionCard>
 );
@@ -219,15 +228,6 @@ function App() {
                     setRegion={setRegion}
 
                   />
-                  <ProviderCard
-                    provider={provider}
-                    setProvider={setProvider}
-                    projectID={projectID}
-                    setProjectID={setProjectID}
-                    region={region}
-                    setRegion={setRegion}
-
-                  />
                 </Box>
               </Box>
 
@@ -235,18 +235,19 @@ function App() {
                 <Collapsible direction="horizontal" open={showSidebar}>
                   <Box
                     flex
-                    width='medium'
                     background='light-2'
-                    elevation='small'
+                    elevation='medium'
                     align='center'
                     justify='center'
+                    overflow='scroll'
                   >
-                    <Heading>Toolbox</Heading>
+                    <Heading aligjustify='center' fill='horizontal'>Toolbox</Heading>
                     <Accordion
                       animate={true}
                       multiple={true}
                       margin='small'
                       flex
+                      fill='horizontal'
                     >
                       <AddFunctionCard
                         functionName={functionName}
@@ -266,26 +267,49 @@ function App() {
                   </Box>
                 </Collapsible>
               ) : (
-                  <Layer>
+                  <Layer animation='none'>
                     <Box
                       background='light-2'
                       tag='header'
-                      justify='end'
-                      align='center'
-                      direction='row'
+
+
+                      direction='column'
                     >
-                      <Button
-                        icon={<Close />}
-                        onClick={() => setShowSidebar(false)}
-                      />
+                      <Box align='center' direction='row' justify='end'>
+                        <Box align='center' justify='center' fill='horizontal'>
+                          <Heading>Toolbox</Heading>
+                        </Box>
+
+                        <Button
+                          icon={<Close />}
+                          onClick={() => setShowSidebar(false)}
+                        />
+                      </Box>
+
+                      <Accordion
+                        animate={true}
+                        multiple={true}
+                        margin='small'
+                        flex
+                        fill='horizontal'
+                      >
+                        <AddFunctionCard
+                          functionName={functionName}
+                          setFunctionName={setFunctionName}
+                          functionLanguage={functionLanguage}
+                          setFunctionLanguage={setFunctionLanguage}
+                        />
+                        <AddDatabaseTableCard
+                          databaseTableName={databaseTableName}
+                          setDatabaseTableName={setDatabaseTableName}
+                        />
+                        <AddStorageBucketCard
+                          storageBucketName={storageBucketName}
+                          setStorageBucketName={setStorageBucketName}
+                        />
+                      </Accordion>
                     </Box>
-                    <Box
-                      fill
-                      background='light-2'
-                      align='center'
-                      justify='center'
-                    >
-                    </Box>
+
                   </Layer>
                 )}
             </Box>
