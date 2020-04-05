@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Text, Accordion, AccordionPanel, Select, TextInput, Main, Box, Button, Collapsible, Heading, Grommet, Layer, ResponsiveContext, Form, FormField, RadioButtonGroup } from 'grommet';
-import { Database, Troubleshoot, Google, Windows, Amazon, Satellite, Close, Notification } from 'grommet-icons';
+import { Launch, Deploy, Troubleshoot, Satellite, Close, Notification } from 'grommet-icons';
 
 const theme = {
   /*
@@ -91,7 +91,7 @@ const FunctionCard = (props) => (
 )
 const DatabaseTableCard = (props) => (
   <Card
-    title='Database'
+    title='Database Table'
     {...props}
   >
     <Text>{props.name}</Text>
@@ -264,6 +264,26 @@ function App() {
     setStorageBucketName(initStorageBucketName);
   }
 
+  function importState() {
+
+  }
+  function exportState() {
+    const configSave = JSON.stringify({
+      provider,
+      region,
+      projectID,
+      functions,
+      databaseTables,
+      storageBuckets
+    })
+    const blob = new Blob([configSave], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = 'project.json';
+    link.href = url;
+    link.click();
+  }
+
   return (
     <Grommet theme={theme} full themeMode="light">
       <ResponsiveContext.Consumer>
@@ -271,7 +291,11 @@ function App() {
           <Main>
             <AppBar>
               <Heading level='2' margin='none'><Satellite /> Mission Control</Heading>
-              <Button icon={<Troubleshoot />} onClick={() => { setShowSidebar(!showSidebar) }} />
+              <Box direction='row'>
+                <Button icon={<Launch />} onClick={() => { exportState() }} />
+                <Button icon={<Troubleshoot />} onClick={() => { setShowSidebar(!showSidebar) }} />
+              </Box>
+
             </AppBar>
 
             <Box direction='row' fill={true}>
