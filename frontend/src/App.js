@@ -238,6 +238,8 @@ function App() {
     );
     setFunctions(functionList);
     setShowSidebar(false);
+    setFunctionName(initFunctionName);
+    setFunctionLanguage(initFunctionLanguage);
   }
 
   function addDatabaseTable(name) {
@@ -248,6 +250,7 @@ function App() {
     );
     setDatabaseTables(tableList);
     setShowSidebar(false);
+    setDatabaseTableName(initDatabaseTableName);
   }
 
   function addStorageBucket(name) {
@@ -258,6 +261,7 @@ function App() {
     );
     setStorageBuckets(bucketList);
     setShowSidebar(false);
+    setStorageBucketName(initStorageBucketName);
   }
 
   return (
@@ -369,14 +373,17 @@ function App() {
                           setFunctionName={setFunctionName}
                           functionLanguage={functionLanguage}
                           setFunctionLanguage={setFunctionLanguage}
+                          addFunction={addFunction}
                         />
                         <AddDatabaseTableCard
                           databaseTableName={databaseTableName}
                           setDatabaseTableName={setDatabaseTableName}
+                          addDatabaseTable={addDatabaseTable}
                         />
                         <AddStorageBucketCard
                           storageBucketName={storageBucketName}
                           setStorageBucketName={setStorageBucketName}
+                          addStorageBucket={addStorageBucket}
                         />
                       </Accordion>
                     </Box>
